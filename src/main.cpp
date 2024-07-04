@@ -38,7 +38,7 @@ int main() {
 
     std::string command = query[0];
     if (!supportedCommands.contains(command)) {
-      std::cout << command << ": command not found";
+      std::cout << command << ": command not found\n";
     }
 
     if (command =="exit") {
@@ -59,13 +59,13 @@ int main() {
     } else if (command == "type") {
       std::string command2 = query[1];
       if (!supportedCommands.contains(command2)) {
-        std::cout << command2 << ": not found";
+        std::cout << command2 << ": not found\n";
       } else {
         commandTypes type = commandTypesMap[command2];
         if (type == bin) {
-          std::cout << command2 << " is /bin/" << command2;
+          std::cout << command2 << " is /bin/" << command2 << '\n';
         } else if (type == builtin) {
-          std::cout << command2 << " is a shell builtin";
+          std::cout << command2 << " is a shell builtin\n";
         }
       }
     }
