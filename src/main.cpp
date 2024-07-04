@@ -8,11 +8,11 @@ namespace fs = std::filesystem;
 
 std::set<std::string> supportedCommands = {
   "echo", "cd", "pwd", "ls", "exit", "type",
-  "cat", ""
+  ""
 };
 
 std::set<std::string> builtinCommands = {
-  "echo","exit","type", "pwd"
+  "echo","exit","type", "pwd", "cd"
 };
 
 bool running = true;
@@ -76,6 +76,8 @@ int main() {
       }
     } else if (command == "pwd") {
       std::cout << working_directory << '\n';
+    } else if (command == "cd") {
+      working_directory = query[1];
     } else if (!command_path.empty()) {
       system(input.c_str());
     } else if (!supportedCommands.contains(command)) {
