@@ -42,11 +42,6 @@ int main() {
     std::string command = query[0];
     std::string command_path;
     command_path = find_command(pathDirectories, command);
-    if (!command_path.empty()) {
-      system(input.c_str());
-    } else if (!supportedCommands.contains(command)) {
-      std::cout << command << ": command not found\n";
-    }
 
     if (command == "exit") {
       running = false;
@@ -74,6 +69,10 @@ int main() {
       } else {
         std::cout << command2 << ": not found\n";
       }
+    } else if (!command_path.empty()) {
+      system(input.c_str());
+    } else if (!supportedCommands.contains(command)) {
+      std::cout << command << ": command not found\n";
     }
 
   }
