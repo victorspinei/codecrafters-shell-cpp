@@ -40,7 +40,11 @@ int main() {
     segment_query(query, input, ' ');
 
     std::string command = query[0];
-    if (!supportedCommands.contains(command)) {
+    std::string command_path;
+    command_path = find_command(pathDirectories, command);
+    if (!command_path.empty()) {
+      system(input.c_str());
+    } else if (!supportedCommands.contains(command)) {
       std::cout << command << ": command not found\n";
     }
 
@@ -61,12 +65,12 @@ int main() {
         }
     } else if (command == "type") {
       const std::string &command2 = query[1];
-      std::string command_path;
-      command_path = find_command(pathDirectories, command2);
+      std::string command2_path;
+      command2_path = find_command(pathDirectories, command2);
       if (builtinCommands.contains(command2)) {
         std::cout << command2 << " is a shell builtin\n";
-      } else if (!command_path.empty()) {
-        std::cout << command2 << " is " << command_path << '\n';
+      } else if (!command2_path.empty()) {
+        std::cout << command2 << " is " << command2_path << '\n';
       } else {
         std::cout << command2 << ": not found\n";
       }
