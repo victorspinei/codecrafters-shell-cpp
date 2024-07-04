@@ -11,13 +11,16 @@ int main() {
   std::cout << std::unitbuf;
   std::cerr << std::unitbuf;
 
-  // Uncomment this block to pass the first stage
-  std::cout << "$ ";
+  bool running = true;
 
-  std::string input;
-  std::getline(std::cin, input);
+  while (running) {
+    std::cout << "$ ";
 
-  if (!supportedCommands.contains(input)) {
-    std::cout << input << ": command not found" << std::endl;
+    std::string input;
+    std::getline(std::cin, input);
+
+    if (!supportedCommands.contains(input)) {
+      std::cout << input << ": command not found" << std::endl;
+    }
   }
 }
