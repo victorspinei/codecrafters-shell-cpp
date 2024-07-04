@@ -81,7 +81,7 @@ int main() {
     } else if (command == "cd") {
       fs::path directory_path;
 
-      if (query.size() == 1) {
+      if (query.size() == 1 || query[1][0] == '~') {
         // No argument, change to home directory
         const char* home = std::getenv("HOME");
         if (home) {
