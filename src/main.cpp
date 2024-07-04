@@ -10,7 +10,7 @@ std::set<std::string> supportedCommands = {
 };
 
 std::set<std::string> builtinCommands = {
-  "exit","type"
+  "echo","exit","type"
 };
 
 bool running = true;
@@ -63,10 +63,10 @@ int main() {
       const std::string &command2 = query[1];
       std::string command_path;
       command_path = find_command(pathDirectories, command2);
-      if (!command_path.empty()) {
-        std::cout << command2 << " is " << command_path << '\n';
-      } else if (builtinCommands.contains(command2)) {
+      if (builtinCommands.contains(command2)) {
         std::cout << command2 << " is a shell builtin\n";
+      } else if (!command_path.empty()) {
+        std::cout << command2 << " is " << command_path << '\n';
       } else {
         std::cout << command2 << ": not found\n";
       }
