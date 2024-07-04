@@ -32,13 +32,17 @@ int main() {
       std::cout << command << ": command not found" << std::endl;
     }
 
-    if (command == "exit") {
+    if (command =="exit") {
       running = false;
       if (query.size() == 1)
         exit_code = 0;
       else
         exit_code = stoi(query[1]);
       break;
+    } else if (command == "echo") {
+        for (int i = 1; i < query.size(); i++)
+          std::cout << query[i] << ' ';
+        std::cout << std::endl;
     }
   }
   return exit_code;
