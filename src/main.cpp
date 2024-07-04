@@ -41,7 +41,7 @@ int main() {
       break;
     } else if (command == "echo") {
         for (int i = 1; i < query.size(); i++)
-          std::cout << query[i] << ' ';
+          std::cout << query[i] << (i == query.size() - 1 ? '' : ' ');
         std::cout << std::endl;
     }
   }
