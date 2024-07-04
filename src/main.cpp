@@ -10,7 +10,7 @@ std::set<std::string> supportedCommands = {
 };
 
 std::set<std::string> builtinCommands = {
-  "echo","exit","type"
+  "exit","type"
 };
 
 bool running = true;
