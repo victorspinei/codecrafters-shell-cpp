@@ -2,9 +2,18 @@
 #include <set>
 #include <vector>
 #include <string>
+#include <map>
 
 std::set<std::string> supportedCommands = {
-  "echo", "cd", "pwd", "ls", "exit"
+  "echo", "cd", "pwd", "ls", "exit", "type",
+  "cat"
+};
+
+enum commandTypes{builtin, bin, SIZE};
+
+std::map<std::string, commandTypes> commandTypesMap = {
+  {"echo", builtin}, {"exit", builtin},
+  {"cat", bin}, {"type", builtin}
 };
 
 bool running = true;
@@ -47,6 +56,18 @@ int main() {
           else
             std::cout << '\n';
         }
+    } else if (command == "type") {
+      std::string command2 = query[1];
+      if (!supportedCommands.contains(command2)) {
+        std::cout << command2 << ": not found" << std::endl;
+        break;
+      }
+      commandTypes type = commandTypesMap[command2];
+      if (type == bin) {
+        std::cout << command2 << " is /bin/" << command2 << std::endl;
+      } else if (type == builtin) {
+        std::cout << command2 << " is a shell builtin" << std::endl;
+      }
     }
   }
   return exit_code;
