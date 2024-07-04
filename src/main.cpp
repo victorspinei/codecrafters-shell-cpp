@@ -4,7 +4,8 @@
 #include <string>
 #include <sys/stat.h>
 #include <filesystem>
-#include <bits/ranges_algo.h>
+#include <algorithm>
+
 namespace fs = std::filesystem;
 
 std::set<std::string> supportedCommands = {
