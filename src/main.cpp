@@ -40,9 +40,13 @@ int main() {
         exit_code = stoi(query[1]);
       break;
     } else if (command == "echo") {
-        for (int i = 1; i < query.size(); i++)
-          std::cout << query[i] << (i == query.size() - 1 ? '' : ' ');
-        std::cout << std::endl;
+        for (int i = 1; i < query.size(); i++) {
+          std::cout << query[i];
+          if (i != query.size() - 1)
+            std::cout << ' ';
+          else
+            std::cout << '\n';
+        }
     }
   }
   return exit_code;
