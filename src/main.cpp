@@ -78,6 +78,7 @@ int main() {
       std::cout << working_directory << '\n';
     } else if (command == "cd") {
       working_directory = query[1];
+      std::cout << '\n';
     } else if (!command_path.empty()) {
       system(input.c_str());
     } else if (!supportedCommands.contains(command)) {
