@@ -3,6 +3,8 @@
 #include <vector>
 #include <string>
 #include <sys/stat.h>
+#include <filesystem>
+namespace fs = std::filesystem;
 
 std::set<std::string> supportedCommands = {
   "echo", "cd", "pwd", "ls", "exit", "type",
@@ -15,6 +17,7 @@ std::set<std::string> builtinCommands = {
 
 bool running = true;
 int exit_code = 0;
+std::string working_directory;
 
 void segment_query(std::vector<std::string>& query, std::string input, char separator);
 std::string find_command(std::vector<std::string> pathDirectories, std::string command);
@@ -24,6 +27,8 @@ int main() {
   std::vector<std::string> pathDirectories;
 
   segment_query(pathDirectories, path, ':');
+
+  working_directory = fs::current_path();
 
   // Flush after every std::cout / std:cerr
   std::cout << std::unitbuf;
@@ -69,6 +74,8 @@ int main() {
       } else {
         std::cout << command2 << ": not found\n";
       }
+    } else if (command == "pwd") {
+      std::cout << working_directory << '\n';
     } else if (!command_path.empty()) {
       system(input.c_str());
     } else if (!supportedCommands.contains(command)) {
