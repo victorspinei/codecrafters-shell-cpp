@@ -21,6 +21,7 @@ std::string working_directory;
 
 void segment_query(std::vector<std::string>& query, std::string input, char separator);
 std::string find_command(std::vector<std::string> pathDirectories, std::string command);
+bool valid_directory(std::string path);
 
 int main() {
   const char* path = std::getenv("PATH");
@@ -77,8 +78,13 @@ int main() {
     } else if (command == "pwd") {
       std::cout << working_directory << '\n';
     } else if (command == "cd") {
-      working_directory = query[1];
-      std::cout << '\n';
+      std::string directory_path = query[1];
+      if (directory_path[0] == '/') {
+        if (valid_directory(directory_path))
+          working_directory = directory_path;
+        else
+          std::cout << command << ": " << directory_path << ": No such file or directory\n";
+      }
     } else if (!command_path.empty()) {
       system(input.c_str());
     } else if (!supportedCommands.contains(command)) {
@@ -117,4 +123,10 @@ std::string find_command(std::vector<std::string> pathDirectories, std::string c
   }
 
   return "";
+}
+bool valid_directory(std::string path) {
+  struct stat sb;
+  if (stat(path.c_str(), &sb) == 0)
+    return true;
+  return false;
 }
