@@ -38,6 +38,7 @@ CMakeCache.txt
 CMakeFiles
 CMakeScripts
 Testing
+cmake-build-debug
 Makefile
 cmake_install.cmake
 install_manifest.txt
@@ -47,3 +48,6 @@ _deps
 
 build/
 vcpkg_installed
+
+# IDE
+.idea
