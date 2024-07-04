@@ -6,7 +6,7 @@
 
 std::set<std::string> supportedCommands = {
   "echo", "cd", "pwd", "ls", "exit", "type",
-  "cat"
+  "cat", ""
 };
 
 enum commandTypes{builtin, bin, SIZE};
@@ -38,7 +38,7 @@ int main() {
 
     std::string command = query[0];
     if (!supportedCommands.contains(command)) {
-      std::cout << command << ": command not found" << std::endl;
+      std::cout << command << ": command not found";
     }
 
     if (command =="exit") {
@@ -59,16 +59,17 @@ int main() {
     } else if (command == "type") {
       std::string command2 = query[1];
       if (!supportedCommands.contains(command2)) {
-        std::cout << command2 << ": not found" << std::endl;
-        break;
-      }
-      commandTypes type = commandTypesMap[command2];
-      if (type == bin) {
-        std::cout << command2 << " is /bin/" << command2 << std::endl;
-      } else if (type == builtin) {
-        std::cout << command2 << " is a shell builtin" << std::endl;
+        std::cout << command2 << ": not found";
+      } else {
+        commandTypes type = commandTypesMap[command2];
+        if (type == bin) {
+          std::cout << command2 << " is /bin/" << command2;
+        } else if (type == builtin) {
+          std::cout << command2 << " is a shell builtin";
+        }
       }
     }
+
   }
   return exit_code;
 }
