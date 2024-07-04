@@ -4,7 +4,6 @@
 #include <string>
 #include <sys/stat.h>
 #include <filesystem>
-#include <algorithm>
 
 namespace fs = std::filesystem;
 
@@ -75,47 +74,43 @@ int main() {
       } else if (!command2_path.empty()) {
         std::cout << command2 << " is " << command2_path << '\n';
       } else {
-        std::cout << command2 << ": not found\n";
+        std::cerr << command2 << ": not found\n";
       }
     } else if (command == "pwd") {
       std::cout << working_directory << '\n';
     } else if (command == "cd") {
-      std::string directory_path = query[1];
+      fs::path directory_path;
 
-      std::vector<std::string> path_query, final_path;
-
-      segment_query(final_path, working_directory, '/');
-      segment_query(path_query, directory_path, '/');
-
-      if (directory_path[0] == '/') {
-        if (valid_directory(directory_path))
-          working_directory = directory_path;
-        else
-          std::cout << command << ": " << directory_path << ": No such file or directory\n";
+      if (query.size() == 1) {
+        // No argument, change to home directory
+        const char* home = std::getenv("HOME");
+        if (home) {
+          directory_path = home;
+        } else {
+          std::cerr << "cd: HOME not set\n";
+          continue;
+        }
       } else {
-        for (const auto& query : path_query) {
-          if (query == ".")
-            continue;
-          else if (query == "..") {
-            final_path.pop_back();
-          } else {
-            final_path.push_back(query);
-          }
-        }
-        std::string changed_path;
-        for (const auto& query : final_path) {
-          changed_path += "/";
-          changed_path += query;
-        }
-        if (valid_directory(changed_path))
-          working_directory = changed_path;
-        else
-          std::cout << command << ": " << changed_path << ": No such file or directory\n";
+        directory_path = query[1];
       }
+
+      fs::path new_path;
+      if (directory_path.is_absolute()) {
+        new_path = directory_path;
+      } else {
+        new_path = working_directory / directory_path;
+      }
+
+      if (valid_directory(new_path.string())) {
+        working_directory = fs::canonical(new_path);
+      } else {
+        std::cerr << "cd: " << new_path.string() << ": No such file or directory\n";
+      }
+
     } else if (!command_path.empty()) {
       system(input.c_str());
     } else if (!supportedCommands.contains(command)) {
-      std::cout << command << ": command not found\n";
+      std::cerr << command << ": command not found\n";
     }
 
   }
@@ -123,8 +118,6 @@ int main() {
 }
 
 void segment_query(std::vector<std::string>& query, std::string input, char separator) {
-    if (input[0] == separator)
-      std::shift_left(input.begin(), input.end(), 1);
     int inputLength = input.size();
     int leftIndex = 0;
     for (int i = 0; i < inputLength; i++) {
