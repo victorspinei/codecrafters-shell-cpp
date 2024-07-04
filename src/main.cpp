@@ -2,26 +2,29 @@
 #include <set>
 #include <vector>
 #include <string>
-#include <map>
+#include <sys/stat.h>
 
 std::set<std::string> supportedCommands = {
   "echo", "cd", "pwd", "ls", "exit", "type",
   "cat", ""
 };
 
-enum commandTypes{builtin, bin, SIZE};
-
-std::map<std::string, commandTypes> commandTypesMap = {
-  {"echo", builtin}, {"exit", builtin},
-  {"cat", bin}, {"type", builtin}
+std::set<std::string> builtinCommands = {
+  "echo","exit","type"
 };
 
 bool running = true;
 int exit_code = 0;
 
-void segment_query(std::vector<std::string>& query, std::string input);
+void segment_query(std::vector<std::string>& query, std::string input, char separator);
+std::string find_command(std::vector<std::string> pathDirectories, std::string command);
 
 int main() {
+  const char* path = std::getenv("PATH");
+  std::vector<std::string> pathDirectories;
+
+  segment_query(pathDirectories, path, ':');
+
   // Flush after every std::cout / std:cerr
   std::cout << std::unitbuf;
   std::cerr << std::unitbuf;
@@ -34,14 +37,14 @@ int main() {
 
     std::getline(std::cin, input);
 
-    segment_query(query, input);
+    segment_query(query, input, ' ');
 
     std::string command = query[0];
     if (!supportedCommands.contains(command)) {
       std::cout << command << ": command not found\n";
     }
 
-    if (command =="exit") {
+    if (command == "exit") {
       running = false;
       if (query.size() == 1)
         exit_code = 0;
@@ -57,16 +60,15 @@ int main() {
             std::cout << '\n';
         }
     } else if (command == "type") {
-      std::string command2 = query[1];
-      if (!supportedCommands.contains(command2)) {
-        std::cout << command2 << ": not found\n";
+      const std::string &command2 = query[1];
+      std::string command_path;
+      command_path = find_command(pathDirectories, command2);
+      if (!command_path.empty()) {
+        std::cout << command2 << " is " << command_path << '\n';
+      } else if (builtinCommands.contains(command2)) {
+        std::cout << command2 << " is a shell builtin\n";
       } else {
-        commandTypes type = commandTypesMap[command2];
-        if (type == bin) {
-          std::cout << command2 << " is /bin/" << command2 << '\n';
-        } else if (type == builtin) {
-          std::cout << command2 << " is a shell builtin\n";
-        }
+        std::cout << command2 << ": not found\n";
       }
     }
 
@@ -74,14 +76,32 @@ int main() {
   return exit_code;
 }
 
-void segment_query(std::vector<std::string>& query, std::string input) {
+void segment_query(std::vector<std::string>& query, std::string input, char separator) {
     int inputLength = input.size();
     int leftIndex = 0;
     for (int i = 0; i < inputLength; i++) {
-        if (input[i] == ' ') {
+        if (input[i] == separator) {
           query.push_back(input.substr(leftIndex, i - leftIndex));
           leftIndex = i + 1;
         }
     }
     query.push_back(input.substr(leftIndex, inputLength - leftIndex));
+}
+std::string find_command(std::vector<std::string> pathDirectories, std::string command) {
+  if (command.empty())
+    return "";
+
+  for (const auto &dir : pathDirectories) {
+    std::string file = dir;
+    if (!file.empty() && file.back() != '/') {
+      file += '/';
+    }
+    file += command;
+
+    struct stat sb;
+    if (stat(file.c_str(), &sb) == 0 && !(sb.st_mode & S_IFDIR))
+      return file;
+  }
+
+  return "";
 }
